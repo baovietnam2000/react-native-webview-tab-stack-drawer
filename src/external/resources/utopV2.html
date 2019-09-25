@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="plugins/swiper/swiper.css">
+    <!-- <link rel="stylesheet" href="css/theme.css"> -->
+    <link rel="stylesheet" href="css/utopV2.css">
+    <title>Utop Version 2</title>
+</head>
+
+<body class="noselect bgr-utop">
+    <div class="utopV2">
+        <!-- Scrip for master data -->
+        <header class="header-utopv2">
+            <h1><img src="img/utopV2/logo.png" alt="logo"></h1>
+            <div class="form-input">
+                <input type="text" name="search" class="form-input" placeholder="Search your merchant, interest">
+                <img src="img/utopV2/search.png" alt="logo">
+            </div>
+            <div class="notification">
+                <img src="img/utopV2/ring.png" alt="logo">
+                <p><span>9</span></p>
+            </div>
+        </header>
+        <div class="user-point">
+            <div id="stickyEl" class="top-point">
+                <div class="left-item">
+                    <div class="img-wrapper">
+                        <img src="img/utopV2/point.png" alt="point">
+                    </div>
+                    <p>ĐIỂM CỦA BẠN</p>
+                </div>
+                <div class="right-item">
+                    <p id="utop-point">{{ formatCurrerncy utopCoin }}</p>
+                    <img src="img/utopV2/logo-blue.png" alt="logo-blue">
+                </div>
+            </div>
+           
+            <div id="hiddenEl" class="bottom-point">
+             {{#each featureCat.children }}
+                <div class="point-item">
+                    <img src="img/utopV2/icon.png" alt="icon-food">
+                    <p>{{ name }}</p>
+                </div>
+             {{/each}}
+            </div>
+           
+        </div>
+        <div class="container loyaltypoints">
+            <div class="uptopV2-slider">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        {{#each bannerProductList }}
+                        <div class="swiper-slide" style="background-image: url({{ formatImageLink custom_attributes }})" data-code={{ sku }}></div>
+                        {{/each}}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="product-warp">
+                <div class="pad-inner flex-between">
+                    <h2 class="name-block">Campaigns</h2>
+                    <a class="see-more" href="">See All <i class="ic-right"></i></a>
+                </div>
+                <div class="pro-block product-list swiper-container">
+                    <div class="pro-list swiper-wrapper">
+                        {{#each giftCat }}
+                        <div class="swiper-slide pro-item list-item" id="gift-item" data-code={{ sku }}>
+                            <div class="boxsha-item">
+                                <a class="img-pro" style="background-image: url({{ formatImageLink custom_attributes }})">
+                                    
+                                </a>
+                                <div class="pad-des">
+                                    <h3 class="name-pro">{{ name }}</h3>
+                                </div>
+                            </div>
+                        </div>                      
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+            <div class="product-warp">
+                <div class="pad-inner flex-between">
+                    <h2 class="name-block">Partner Points</h2>
+                    <a class="see-more" href="">See All <i class="ic-right"></i></a>
+                </div>
+                <div class="pro-block product-list swiper-container">
+                    <div class="pro-list swiper-wrapper">
+                        {{#each giftCat }}
+                        <div class="swiper-slide pro-item list-item" id="gift-item" data-code={{ sku }}>
+                            <div class="boxsha-item">
+                                <a class="img-pro" style="background-image: url({{ formatImageLink custom_attributes }})">
+                                    
+                                </a>
+                                <div class="pad-des">
+                                    <h3 class="name-pro">{{ name }}</h3>
+                                </div>
+                            </div>
+                        </div>                      
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay outer">
+        <div class="inner">
+            <div class="circleOuter"></div>
+            <div class="circleInner"></div>
+        </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/handlebars.min.js"></script>
+    <script src="plugins/swiper/swiper.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script type="text/javascript">
+
+    Handlebars.registerHelper('formatImageLink', function(data) {
+
+        var imgLink;
+
+        data.filter(function(entry) {
+
+            if(entry.attribute_code.toLowerCase() === 'image') {
+                imgLink = 'https://magento.dentalgold.site/pub/media/catalog/product' + entry.value;
+            }
+        });
+
+        console.log(imgLink);
+
+        return imgLink;
+    });
+
+    Handlebars.registerHelper('formatCurrerncy', function(value) {
+
+        value = value.format();
+
+        return value;
+    });
+
+    var sourceuUtopV2 = null;
+
+    function loadData(data) {
+        sourceuUtopV2 = sourceuUtopV2 || $('#utopv2-masterdata').html();
+        var template = Handlebars.compile(sourceuUtopV2);
+        var context = data;
+        var htmlRaw = template(context);
+
+
+        $('.utopV2').append(htmlRaw);
+
+        var swiperBanner = new Swiper('.uptopV2-slider .swiper-container', {
+            pagination: {
+                el: '.swiper-pagination',
+            },
+            autoplay: {
+                delay: 5000,
+            },
+            spaceBetween: 20,
+            speed: 1000,
+            loop: true,
+
+        });
+
+         // Init Click Events
+         $('.list-item').click(function (data) {
+                    
+                    var giftId = $(this).attr("data-code");
+                    // var eGiftType = $(this).attr("data-code-egifttype");
+                    var message = {};
+
+                    // if (eGiftType.toLowerCase() !== 'mobilecard') {
+                        message = {
+                            name: 'detail',
+                            body: giftId
+                        };
+                    // } else {
+                    //     message = {
+                    //         name: 'mobilecard',
+                    //         body: giftId
+                    //     };
+                    // }
+
+                    ReactNativeWebView.postMessage(JSON.stringify(message));
+                });
+
+        // Init Slider
+        var swiperProductList = new Swiper('.product-list', {
+            slidesPerView: 'auto',
+            spaceBetween: 0,
+            // Disable preloading of all images
+            preloadImages: false,
+
+            // Enable lazy loading
+            lazy: {
+                loadPrevNext: true,
+                loadPrevNextAmount: 2
+            }
+        });
+
+        //Sticky Element
+        window.onscroll = function() { myFunction() };
+
+        var topFeature = document.getElementById("stickyEl");
+        var bottomFeature = document.getElementById("hiddenEl");
+        var sticky = topFeature.offsetTop;
+
+        function myFunction() {
+            if (window.pageYOffset > sticky) {
+                topFeature.classList.add("sticky");
+                bottomFeature.classList.add("hidden-box");
+            } else {
+                topFeature.classList.remove("sticky");
+                bottomFeature.classList.remove("hidden-box");
+            }
+        }
+
+        $('.pro-item').unbind('click');
+        $('.pro-item').bind('click', function(event) {
+            event.preventDefault();
+            var sku = $(this).attr('data-code');
+
+            var message = {
+                name: 'detail',
+                body:sku
+            };
+            ReactNativeWebView.postMessage(JSON.stringify(message));
+        });
+
+    }
+
+    </script>
+</body>
+
+</html>
